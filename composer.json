@@ -1,0 +1,21 @@
+{
+    "name": "wppl/asse-akamai",
+    "type": "wordpress-plugin",
+    "description": "Asse Akamai for Wordpress",
+    "keywords": [
+        "wordpress",
+        "plugin",
+        "akamai"
+    ],
+    "homepage": "https://as-stash.axelspringer.de/projects/WPPL/repos/asse-akamai",
+    "license": "proprietary",
+    "authors": [
+    ],
+    "require": {
+        "composer/installers": "1.2.*",
+        "akamai-open/edgegrid-auth": "^1.0"
+    },
+    "extra": {
+        "installer-name": "asse-akamai"
+    }
+}
