@@ -8,23 +8,23 @@ class AsseAkamaiSettings {
   protected $plugin_slug;
   protected $hook_suffix;
 
-	public function __construct( $slug ){
+  public function __construct( $slug ){
     $this->plugin_slug = $slug;
 
     $this->init();
 
-		// Actions
-		add_action(	'admin_menu',						array($this, 'add_admin_menu') );
-		add_action( 'admin_notices', 				array($this, 'theme_settings_admin_notices') );
-		add_action( 'admin_init',						array($this, 'register_settings') );
-	}
+	add_action(	'admin_menu',			  array( &$this, 'add_admin_menu' ) );
+	add_action( 'admin_init',			  array( &$this, 'register_settings' ) );
+	add_action( 'admin_notices', 		  array( &$this, 'theme_settings_admin_notices' ) );
+    add_action( 'admin_enqueue_scripts',  array( &$this, 'enqueue_admin_scripts' ) );
+  }
 
   private function init() {
     $this->plugin_title       = __( 'ASSE Akamai', 'asse-akamai' );
 		$this->plugin_menu_title  = __( 'Akamai', 'asse-akamai' );
     $this->plugin_slug        = $this->plugin_slug . '_settings_page';
 
-    $this->plugin_permission  = 'install_plugins';
+    $this->plugin_permission  = 'manage_options';
   }
 
 	public function register_settings(){
@@ -167,10 +167,10 @@ class AsseAkamaiSettings {
 	}
 
 	public function add_admin_menu() {
-		$theme_page = add_options_page( $this->plugin_title, $this->plugin_menu_title, $this->plugin_permission, $this->plugin_slug, array($this, 'settings_page') );
+		$theme_page = add_options_page( $this->plugin_title, $this->plugin_menu_title, $this->plugin_permission, $this->plugin_slug, array( $this, 'settings_page' ) );
 	}
 
-	public function settings_page(){
+	public function settings_page() {
 		?>
 		<div class="wrap afbia-settings-page">
 			<h2><span class='hidden-xs'><?= esc_html($this->plugin_menu_title) ?></span></h2>
@@ -252,6 +252,14 @@ class AsseAkamaiSettings {
 			</div>
 		</div><!-- wrap -->
 		<?php
+	}
+
+  public function enqueue_admin_scripts() {
+		wp_register_style( 'asse_akamai_admin_style', ASSE_AKAMAI_PLUGIN_URL . 'admin/admin.css', false, get_option('asse_akamai_version') );
+    wp_register_script( 'asse_akamai_admin_script' , ASSE_AKAMAI_PLUGIN_URL . 'admin/admin.min.js', array( 'jquery', 'wp-util'), get_option('asse_akamai_version'), true );
+
+    wp_enqueue_style( 'asse_akamai_admin_style' );
+		wp_enqueue_script( 'asse_akamai_admin_script' );
 	}
 
 	public function theme_settings_admin_notices(){

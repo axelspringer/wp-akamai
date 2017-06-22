@@ -9,7 +9,7 @@
  * that starts the plugin.
  *
  * @link              https://as-stash.axelspringer.de/projects/WPPL/repos/asse-akamai
- * @since             0.0.1
+ * @since             0.0.2
  * @package           AsseAkamai
  * @author            Sebastian Döll <sebastian.doell@axelspringer.de>
  *
@@ -26,7 +26,7 @@
 defined( 'ABSPATH' ) || exit;
 
 if ( ! defined( 'ASSE_AKAMAI_VERSION' ) ) {
-  define( 'ASSE_AKAMAI_VERSION', '0.0.1' );
+  define( 'ASSE_AKAMAI_VERSION', '0.0.2' );
 }
 
 if ( ! defined( 'ASSE_AKAIMAI_MIN_WORDPRESS' ) ) {
@@ -35,6 +35,10 @@ if ( ! defined( 'ASSE_AKAIMAI_MIN_WORDPRESS' ) ) {
 
 if ( ! defined( 'ASSE_AKAMAI_MIN_PHP' ) ) {
   define( 'ASSE_AKAMAI_MIN_PHP', '5.5' );
+}
+
+if ( ! defined( 'ASSE_AKAMAI_PLUGIN_URL' ) ) {
+  define( 'ASSE_AKAMAI_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 }
 
 if ( version_compare( $GLOBALS['wp_version'], ASSE_AKAIMAI_MIN_WORDPRESS, '<' ) ) {
