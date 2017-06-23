@@ -13,9 +13,9 @@ class AsseAkamaiSettings {
 
     $this->init();
 
-	add_action(	'admin_menu',			  array( &$this, 'add_admin_menu' ) );
-	add_action( 'admin_init',			  array( &$this, 'register_settings' ) );
-	add_action( 'admin_notices', 		  array( &$this, 'theme_settings_admin_notices' ) );
+	  add_action(	'admin_menu',			  array( &$this, 'add_admin_menu' ) );
+	  add_action( 'admin_init',			  array( &$this, 'register_settings' ) );
+	  add_action( 'admin_notices', 		  array( &$this, 'theme_settings_admin_notices' ) );
     add_action( 'admin_enqueue_scripts',  array( &$this, 'enqueue_admin_scripts' ) );
   }
 
@@ -27,12 +27,55 @@ class AsseAkamaiSettings {
     $this->plugin_permission  = 'manage_options';
   }
 
-	public function register_settings(){
+	public function register_settings() {
 
-    // Domains
+    // Zugang
+		$args = array(
+			'id'			    => 'asse_akamai_credentials',
+			'title'			  => 'Zugang',
+			'page'			  => $this->plugin_slug,
+			'description'	=> '',
+		);
+		$asse_akamai_credentials = new AsseAkamaiSettingsSection( $args );
+
+    $args = array(
+			'id'				    => 'asse_akamai_client_token',
+			'title'				  => 'Client Token',
+			'page'				  => $this->plugin_slug,
+			'section'			  => 'asse_akamai_credentials',
+			'description'   => '',
+			'type'				  => 'text', // text, textarea, password, checkbox
+			'multi'				  => false,
+			'option_group'	=> $this->plugin_slug,
+		);
+		$asse_akamai_client_token = new AsseAkamaiSettingsField( $args );
+
+    $args = array(
+			'id'				    => 'asse_akamai_client_secret',
+			'title'				  => 'Client Secret',
+			'page'				  => $this->plugin_slug,
+			'section'			  => 'asse_akamai_credentials',
+			'description'   => '',
+			'type'				  => 'text', // text, textarea, password, checkbox
+			'multi'				  => false,
+			'option_group'	=> $this->plugin_slug,
+		);
+		$asse_akamai_client_secret = new AsseAkamaiSettingsField( $args );
+
+    $args = array(
+			'id'				    => 'asse_akamai_access_token',
+			'title'				  => 'Access Token',
+			'page'				  => $this->plugin_slug,
+			'section'			  => 'asse_akamai_credentials',
+			'description'   => '',
+			'type'				  => 'text', // text, textarea, password, checkbox
+			'multi'				  => false,
+			'option_group'	=> $this->plugin_slug,
+		);
+		$asse_akamai_access_token = new AsseAkamaiSettingsField( $args );
+
 		$args = array(
 			'id'			  => 'asse_akamai_settings',
-			// 'icon'			=> 'cart',
 			'title'			=> 'Einstellungen',
 			'page'			=> $this->plugin_slug,
 			'description'	=> '',
@@ -55,49 +98,13 @@ class AsseAkamaiSettings {
 			'id'				    => 'asse_akamai_host',
 			'title'				  => 'Host',
 			'page'				  => $this->plugin_slug,
-			'section'			  => 'asse_akamai_settings',
+			'section'			  => 'asse_akamai_credentials',
 			'description'   => '',
 			'type'				  => 'text', // text, textarea, password, checkbox
 			'multi'				  => false,
 			'option_group'	=> $this->plugin_slug,
 		);
 		$asse_akamai_host = new AsseAkamaiSettingsField( $args );
-
-    $args = array(
-			'id'				    => 'asse_akamai_client_token',
-			'title'				  => 'Client Token',
-			'page'				  => $this->plugin_slug,
-			'section'			  => 'asse_akamai_settings',
-			'description'   => '',
-			'type'				  => 'text', // text, textarea, password, checkbox
-			'multi'				  => false,
-			'option_group'	=> $this->plugin_slug,
-		);
-		$asse_akamai_client_token = new AsseAkamaiSettingsField( $args );
-
-    $args = array(
-			'id'				    => 'asse_akamai_client_secret',
-			'title'				  => 'Client Secret',
-			'page'				  => $this->plugin_slug,
-			'section'			  => 'asse_akamai_settings',
-			'description'   => '',
-			'type'				  => 'text', // text, textarea, password, checkbox
-			'multi'				  => false,
-			'option_group'	=> $this->plugin_slug,
-		);
-		$asse_akamai_client_secret = new AsseAkamaiSettingsField( $args );
-
-    $args = array(
-			'id'				    => 'asse_akamai_access_token',
-			'title'				  => 'Access Token',
-			'page'				  => $this->plugin_slug,
-			'section'			  => 'asse_akamai_settings',
-			'description'   => '',
-			'type'				  => 'text', // text, textarea, password, checkbox
-			'multi'				  => false,
-			'option_group'	=> $this->plugin_slug,
-		);
-		$asse_akamai_access_token = new AsseAkamaiSettingsField( $args );
 
     $args = array(
 			'id'				    => 'asse_akamai_purge_front',
@@ -111,7 +118,7 @@ class AsseAkamaiSettings {
 		$asse_akamai_purge_front = new AsseAkamaiSettingsField( $args );
 
     $args = array(
-			'id'				    => 'asse_akamai_purge_category',
+			'id'				    => 'asse_akamai_purge_categories',
 			'title'				  => 'Kategorien mit bereinigen',
 			'page'				  => $this->plugin_slug,
 			'section'			  => 'asse_akamai_settings',
@@ -119,7 +126,7 @@ class AsseAkamaiSettings {
 			'type'				  => 'checkbox', // text, textarea, password, checkbox
 			'option_group'	=> $this->plugin_slug,
 		);
-		$asse_akamai_purge_category = new AsseAkamaiSettingsField( $args );
+		$asse_akamai_purge_categories = new AsseAkamaiSettingsField( $args );
 
     $args = array(
 			'id'				    => 'asse_akamai_purge_tags',
@@ -133,11 +140,19 @@ class AsseAkamaiSettings {
 		$asse_akamai_purge_tags = new AsseAkamaiSettingsField( $args );
 
     $args = array(
+			'id'			  => 'asse_akamai_edge_settings',
+			'title'			=> 'Edge',
+			'page'			=> $this->plugin_slug,
+			'description'	=> '',
+		);
+		$asse_akamai_edge_settings = new AsseAkamaiSettingsSection( $args );
+
+    $args = array(
 			'id'				    => 'asse_akamai_edge_max_age',
 			'title'				  => 'Edge Max Age',
 			'page'				  => $this->plugin_slug,
-			'section'			  => 'asse_akamai_settings',
-			'description'   => '',
+			'section'			  => 'asse_akamai_edge_settings',
+			'description'   => 'Standardeinstellung: 1d (1 Tag)',
 			'type'				  => 'text', // text, textarea, password, checkbox
 			'option_group'	=> $this->plugin_slug,
 		);
@@ -147,8 +162,8 @@ class AsseAkamaiSettings {
 			'id'				    => 'asse_akamai_edge_downstream_ttl',
 			'title'				  => 'Edge Downstream TTL',
 			'page'				  => $this->plugin_slug,
-			'section'			  => 'asse_akamai_settings',
-			'description'   => '',
+			'section'			  => 'asse_akamai_edge_settings',
+			'description'   => 'Standardeinstellung: 1m (1 Minute)',
 			'type'				  => 'text', // text, textarea, password, checkbox
 			'option_group'	=> $this->plugin_slug,
 		);
@@ -158,8 +173,8 @@ class AsseAkamaiSettings {
 			'id'				    => 'asse_akamai_edge_options',
 			'title'				  => 'Edge Options',
 			'page'				  => $this->plugin_slug,
-			'section'			  => 'asse_akamai_settings',
-			'description'   => '',
+			'section'			  => 'asse_akamai_edge_settings',
+			'description'   => 'Standardeinstellung: !no-store (Nicht im Proxy cachen)',
 			'type'				  => 'text', // text, textarea, password, checkbox
 			'option_group'	=> $this->plugin_slug,
 		);
@@ -246,7 +261,7 @@ class AsseAkamaiSettings {
 			<div class="credits-container">
 				<div class="row">
 					<div class="col-xs-12">
-            Version <?= get_option('asse_akamai_version') ?>
+            Version <?= get_option( 'asse_akamai_version' ) ?>
 					</div>
 				</div>
 			</div>

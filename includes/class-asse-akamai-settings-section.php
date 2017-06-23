@@ -21,7 +21,7 @@ class AsseAkamaiSettingsSection {
 
 	private function register_section() {
 		global $wp_settings_sections;
-		$wp_settings_sections[ $this->args['page'] ][ $this->args['id'] ] = array( 'id' => $this->args['id'], 'title' => $this->args['title'], 'callback' => array($this, 'output_callback'), 'icon' => $this->args['icon']);
+		$wp_settings_sections[$this->args['page']][$this->args['id']] = array( 'id' => $this->args['id'], 'title' => $this->args['title'], 'callback' => array($this, 'output_callback'), 'icon' => $this->args['icon']);
 	}
 
 	public function output_callback() {

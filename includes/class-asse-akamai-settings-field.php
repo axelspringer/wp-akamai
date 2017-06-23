@@ -5,7 +5,7 @@ class AsseAkamaiSettingsField {
 	private $args;
 
 	public function __construct( $args ){
-		$defaults = array(
+	  $defaults = array(
 			'id'				        => NULL,
 			'title'				      => NULL,
 			'page'				      => NULL,

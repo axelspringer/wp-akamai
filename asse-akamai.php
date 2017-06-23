@@ -9,7 +9,7 @@
  * that starts the plugin.
  *
  * @link              https://as-stash.axelspringer.de/projects/WPPL/repos/asse-akamai
- * @since             0.0.2
+ * @since             0.0.1
  * @package           AsseAkamai
  * @author            Sebastian Döll <sebastian.doell@axelspringer.de>
  *
@@ -17,7 +17,7 @@
  * Plugin Name:       Asse Akamai
  * Plugin URI:        https://as-stash.axelspringer.de/projects/WPPL/repos/asse-akamai
  * Description:       Akamai for Asse WordPress Plugin.
- * Version:           0.0.1
+ * Version:           0.0.3
  * Author:            Axel Springer
  * Author URI:        https://www.axelspringer.de
  * Text Domain:       asse-akamai
@@ -25,8 +25,12 @@
 
 defined( 'ABSPATH' ) || exit;
 
+// composer
+require_once( __DIR__ . '/vendor/autoload.php');
+
+// globals
 if ( ! defined( 'ASSE_AKAMAI_VERSION' ) ) {
-  define( 'ASSE_AKAMAI_VERSION', '0.0.2' );
+  define( 'ASSE_AKAMAI_VERSION', '0.0.3' );
 }
 
 if ( ! defined( 'ASSE_AKAIMAI_MIN_WORDPRESS' ) ) {
@@ -41,37 +45,26 @@ if ( ! defined( 'ASSE_AKAMAI_PLUGIN_URL' ) ) {
   define( 'ASSE_AKAMAI_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 }
 
+if ( ! defined( 'ASSE_AKAMAI_PLUGIN_DIR' ) ) {
+  define( 'ASSE_AKAMAI_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+}
+
+// timber
+$timber               = new \Timber\Timber();
+$timber_context       = array();
+\Timber::$locations[] = ASSE_AKAMAI_PLUGIN_DIR . 'templates/';
+
 if ( version_compare( $GLOBALS['wp_version'], ASSE_AKAIMAI_MIN_WORDPRESS, '<' ) ) {
   add_action( 'admin_notices', function () {
-    echo  '<div class="notice notice-error">' .
-          __( 'Error: "ASSE Akamai" requires a newer version of WordPress to be running.', 'asse-akamai' ) .
-          '<br/>' . __( 'Minimal version of WordPress required: ', 'asse-akamai' ) . '<strong>' . ASSE_AKAIMAI_MIN_WORDPRESS . '</strong>' .
-		      '<br/>' . __( 'Your WordPress version: ', 'asse-akamai' ) . '<strong>' . $GLOBALS['wp_version'] . '</strong>' .
-		      '</div>';
+    $timber_context = array(
+      'wp_version'      => $GLOBALS['wp_version'],
+      'wp_version_min'  => ASSE_AKAIMAI_MIN_WORDPRESS
+    );
+    Timber::render( 'notice-wp-version.twig', $timber_context );
   } );
 
 	return false;
 }
-
-if ( version_compare( phpversion(), ASSE_AKAMAI_MIN_PHP, '<' ) ) {
-  add_action( 'admin_notices', function () {
-    echo  '<div class="notice notice-error">' .
-          __( 'Error: "ASSE Akamai" requires a newer version of PHP to be running.', 'asse-akamai' ) .
-          '<br/>' . __( 'Minimal version of PHP required: ', 'asse-akamai' ) . '<strong>' . ASSE_AKAMAI_MIN_PHP . '</strong>' .
-		      '<br/>' . __( 'Your server\'s PHP version: ', 'asse-akamai' ) . '<strong>' . phpversion() . '</strong>' .
-		      '</div>';
-  } );
-
-	return false;
-}
-
-require_once 'vendor/akamai-open/edgegrid-auth/src/Authentication.php';
-require_once 'vendor/akamai-open/edgegrid-auth/src/Authentication/Timestamp.php';
-require_once 'vendor/akamai-open/edgegrid-auth/src/Authentication/Nonce.php';
-require_once 'vendor/akamai-open/edgegrid-auth/src/Authentication/Exception.php';
-require_once 'vendor/akamai-open/edgegrid-auth/src/Authentication/Exception/ConfigException.php';
-require_once 'vendor/akamai-open/edgegrid-auth/src/Authentication/Exception/SignerException.php';
-require_once 'vendor/akamai-open/edgegrid-auth/src/Authentication/Exception/SignerException/InvalidSignDataException.php';
 
 // includes
 require plugin_dir_path( __FILE__ ) . 'includes/class-asse-akamai.php';

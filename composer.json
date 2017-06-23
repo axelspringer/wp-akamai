@@ -13,7 +13,8 @@
     ],
     "require": {
         "composer/installers": "1.2.*",
-        "akamai-open/edgegrid-auth": "^1.0"
+        "akamai-open/edgegrid-auth": "^1.0",
+        "timber/timber": "^1.3"
     },
     "extra": {
         "installer-name": "asse-akamai"
