@@ -140,6 +140,28 @@ class AsseAkamaiSettings {
 		$asse_akamai_purge_tags = new AsseAkamaiSettingsField( $args );
 
     $args = array(
+			'id'				    => 'asse_akamai_purge_archive',
+			'title'				  => 'Archiv bereinigen',
+			'page'				  => $this->plugin_slug,
+			'section'			  => 'asse_akamai_settings',
+			'description'   => '',
+			'type'				  => 'checkbox', // text, textarea, password, checkbox
+			'option_group'	=> $this->plugin_slug,
+		);
+		$asse_akamai_purge_archive = new AsseAkamaiSettingsField( $args );
+
+    $args = array(
+			'id'				    => 'asse_akamai_purge_pagemanager',
+			'title'				  => 'PageManager bereinigen',
+			'page'				  => $this->plugin_slug,
+			'section'			  => 'asse_akamai_settings',
+			'description'   => '',
+			'type'				  => 'checkbox', // text, textarea, password, checkbox
+			'option_group'	=> $this->plugin_slug,
+		);
+		$asse_akamai_purge_pagemanager = new AsseAkamaiSettingsField( $args );
+
+    $args = array(
 			'id'			  => 'asse_akamai_edge_settings',
 			'title'			=> 'Edge',
 			'page'			=> $this->plugin_slug,
