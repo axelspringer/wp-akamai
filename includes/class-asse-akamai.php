@@ -505,7 +505,7 @@ class AsseAkamai {
       // something to update
 		}
 
-		update_option( 'asse_akamai_version', AsseAkamai::VERSION );
+		update_option( 'asse_akamai_version', ASSE_AKAMAI_VERSION );
 	}
 
   /**
@@ -514,7 +514,7 @@ class AsseAkamai {
    * @return void
    */
 	public static function activate() {
-		add_option( 'asse_akamai_version', AsseAkamai::VERSION );
+		add_option( 'asse_akamai_version', ASSE_AKAMAI_VERSION );
 	}
 
   /**
