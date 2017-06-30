@@ -152,7 +152,9 @@ class AsseAkamai {
     }
 
     $responses = array_map( function ( $response ) use ( $success ) {
-      $success = $carry = wp_remote_retrieve_response_code( $response ) !== 201;
+      if ( wp_remote_retrieve_response_code( $response ) !== 201 ) {
+        $success = false;
+      }
       return json_decode( wp_remote_retrieve_body( $response ) );
     }, $responses );
 
