@@ -45,7 +45,6 @@ class AsseAkamai {
     $this->base_url         = parse_url( get_bloginfo( 'url' ), PHP_URL_PATH ) . '/';
 		$this->base_url         = apply_filters( 'asse_akamai_canonical_url', $this->base_url );
 
-
 		$this->set_env_vars();
 		$this->register_hooks();
 	}
@@ -101,10 +100,7 @@ class AsseAkamai {
 		}
 
     $this->purge_post = $post;
-
-		foreach ( $this->options['hostnames'] as $host ) {
-			$this->purge( $host );
-		}
+    $this->purge( $this->options['hostnames'] );
 	}
 
   /**
@@ -136,31 +132,37 @@ class AsseAkamai {
    * @param [type] $host
    * @return void
    */
-	public function purge( $host ) {
-		$body = $this->get_purge_body( $host );
-		$auth = $this->get_purge_auth( $body );
+	public function purge( $hosts ) {
 
-		$response = wp_remote_post( 'https://' . $auth->getHost() . $auth->getPath(), array(
-			'user-agent' => $this->get_user_agent(),
-			'headers' => array(
-				'Authorization' => $auth->createAuthHeader(),
-				'Content-Type' => 'application/json',
-		  	),
-			'body' => $body
-		) );
+    $responses  = [];
+    $success    = true;
 
-		if ( wp_remote_retrieve_response_code( $response ) !== 201 ) {
-			$instance = $this;
-			add_filter( 'redirect_post_location', function ( $location ) use ( $instance, $response ) {
-				$body = json_decode( wp_remote_retrieve_body( $response ) );
+    foreach( array_filter( $hosts ) as $host ) {
+      $body = $this->get_purge_body( $host );
+		  $auth = $this->get_purge_auth( $body );
 
-				return $instance->add_error_query_arg( $location, $body );
-			}
-			, 100 );
-		}
-		else {
-			add_filter( 'redirect_post_location', array( &$this, 'add_success_query_arg') , 100 );
-		}
+      $responses[] = wp_remote_post( 'https://' . $auth->getHost() . $auth->getPath(), array(
+			  'user-agent' => $this->get_user_agent(),
+			  'headers' => array(
+				  'Authorization' => $auth->createAuthHeader(),
+				  'Content-Type' => 'application/json',
+		  	  ),
+			  'body' => $body
+		  ) );
+    }
+
+    $responses = array_map( function ( $response ) use ( $success ) {
+      $success = $carry = wp_remote_retrieve_response_code( $response ) !== 201;
+      return json_decode( wp_remote_retrieve_body( $response ) );
+    }, $responses );
+
+    if ( $success ) {
+      add_filter( 'redirect_post_location', function ( $location ) use ( $instance, $responses ) {
+				return $instance->add_error_query_arg( $location, $responses );
+      }, 100 );
+    } else {
+      add_filter( 'redirect_post_location', array( &$this, 'add_success_query_arg' ) , 100 );
+    }
 	}
 
   /**
