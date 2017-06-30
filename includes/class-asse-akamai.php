@@ -156,7 +156,8 @@ class AsseAkamai {
       return json_decode( wp_remote_retrieve_body( $response ) );
     }, $responses );
 
-    if ( $success ) {
+    if ( ! $success ) {
+      $instance = $this;
       add_filter( 'redirect_post_location', function ( $location ) use ( $instance, $responses ) {
 				return $instance->add_error_query_arg( $location, $responses );
       }, 100 );
@@ -460,13 +461,13 @@ class AsseAkamai {
    * Add a parameter in case of error
    *
    * @param [type] $location
-   * @param [type] $response
+   * @param [type] $responses
    * @return void
    */
-	public function add_error_query_arg( $location, $response ) {
+	public function add_error_query_arg( $location, $responses ) {
 		remove_filter( 'redirect_post_location', array( $this, 'add_error_query_arg' ), 100 );
 
-		return add_query_arg( array( 'asse-akamai-purge-error' => urlencode( $response->detail ) ), $location );
+		return add_query_arg( array( 'asse-akamai-purge-error' => 'true' ), $location );
 	}
 
   /**
@@ -489,8 +490,8 @@ class AsseAkamai {
 	public function admin_notices() {
 		if ( isset( $_GET['asse-akamai-purge-error'] ) ) {
 			$timber_context = array(
-			        'error'   => $_GET['asse-akamai-purge-error']
-			      );
+			  'error'   => $_GET['asse-akamai-purge-error']
+			);
 			Timber::render( 'notice-purge-error.twig', $timber_context );
 		}
 	}
