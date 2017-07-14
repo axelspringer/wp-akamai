@@ -6,10 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'Twig\\' => array($vendorDir . '/twig/twig/src'),
-    'Timber\\' => array($vendorDir . '/timber/timber/lib'),
-    'Symfony\\Polyfill\\Mbstring\\' => array($vendorDir . '/symfony/polyfill-mbstring'),
     'Composer\\Installers\\' => array($vendorDir . '/composer/installers/src/Composer/Installers'),
+    'Asse\\' => array($baseDir . '/src'),
     'Akamai\\Open\\EdgeGrid\\' => array($vendorDir . '/akamai-open/edgegrid-auth/src'),
-    '' => array($vendorDir . '/asm89/twig-cache-extension/lib'),
 );

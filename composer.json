@@ -9,12 +9,46 @@
     ],
     "homepage": "https://as-stash.axelspringer.de/projects/WPPL/repos/asse-akamai",
     "license": "proprietary",
+    "config": {
+      "preferred-install": "dist",
+      "optimize-autoloader": true,
+      "secure-http": true
+    },
+    "repositories": [
+    {
+      "type": "composer",
+      "url": "https://toran-proxy.asit.services/repo/private/",
+      "options": {
+        "ssl": {
+          "verify_peer": false,
+          "verify_peer_name": false,
+          "allow_self_signed": true
+        }
+      }
+    },
+    {
+      "type": "composer",
+      "url": "https://toran-proxy.asit.services/repo/packagist/",
+      "options": {
+        "ssl": {
+          "verify_peer": false,
+          "verify_peer_name": false,
+          "allow_self_signed": true
+        }
+      }
+    },
+    {"packagist": false}
+    ],
+    "autoload": {
+      "psr-4" : {
+        "Asse\\" : "src/"
+      }
+    },
     "authors": [
     ],
     "require": {
         "composer/installers": "1.2.*",
-        "akamai-open/edgegrid-auth": "^1.0",
-        "timber/timber": "^1.3"
+        "akamai-open/edgegrid-auth": "^1.0"
     },
     "extra": {
         "installer-name": "asse-akamai"
