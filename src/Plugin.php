@@ -423,7 +423,7 @@ class Akamai extends AbstractPlugin {
    * @return void
    */
 	protected function get_user_agent() {
-		return sprintf( 'WordPress/%s Asse-Akamai/%s PHP/%s', get_bloginfo( 'version' ), ASSE_AKAMAI_VERSION, phpversion() );
+		return sprintf( 'WordPress/%s Asse-Akamai/%s PHP/%s', get_bloginfo( 'version' ), $this->config->version, phpversion() );
 	}
 
   /**
