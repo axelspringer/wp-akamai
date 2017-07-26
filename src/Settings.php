@@ -142,12 +142,23 @@ final class Settings extends Config  {
 		$asse_akamai_purge_pagemanager = new Field( $args );
 
     $args = array(
+			'id'				    => 'asse_akamai_purge_feed',
+			'title'				  => 'Feed bereinigen',
+			'page'				  => $this->page,
+			'section'			  => 'asse_akamai_settings',
+			'description'   => '',
+			'type'				  => 'checkbox', // text, textarea, password, checkbox
+			'option_group'	=> $this->page,
+		);
+		$asse_akamai_purge_feed = new Field( $args );
+
+    $args = array(
 			'id'			  => 'asse_akamai_edge_settings',
 			'title'			=> 'Edge',
 			'page'			=> $this->page,
 			'description'	=> '',
 		);
-		$asse_akamai_edge_settings = new Field( $args );
+		$asse_akamai_edge_settings = new Section( $args );
 
     $args = array(
 			'id'				    => 'asse_akamai_edge_max_age',

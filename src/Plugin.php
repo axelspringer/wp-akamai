@@ -68,7 +68,7 @@ class Akamai extends AbstractPlugin {
     // save for later
 		// add_action( 'comment_post', array( &$this, 'purge_on_comment' ) );
 
-		add_action( 'send_headers', array( &$this, 'send_headers' ) );
+		add_action( 'wp', array( &$this, 'send_headers' ) );
 		add_action( 'admin_notices', array( &$this, 'admin_notices' ) );
 
     // for local debug
@@ -120,7 +120,34 @@ class Akamai extends AbstractPlugin {
 	public function send_headers() {
 		$defaults   = $this->akamai_edge_defaults;
 
-    if ( is_admin() ) {
+    if ( ! $this->options['hostnames']
+      || count( $this->options['hostnames'] ) < 1 )
+        return;
+
+    if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+      return;
+    } elseif( defined('XMLRPC_REQUEST') && XMLRPC_REQUEST ) {
+      return;
+    } elseif( defined('REST_REQUEST') && REST_REQUEST ) {
+      return;
+    } elseif ( is_admin()
+      || post_password_required()
+      || is_404()
+      || post_password_required()
+      || is_search() ) {
+      return;
+    }
+
+    if ( ! $this->options['purge_pagemanager']
+      && ( is_category() || is_tag() || is_front_page() || is_home() ) ) {
+      return;
+    } elseif ( ! $this->options['purge_feed'] && is_feed() ) {
+      return;
+    } elseif ( ! $this->options['purge_category'] && is_category() ) {
+      return;
+    } elseif ( ! $this->options['purge_archive'] && is_archive() ) {
+      return;
+    } elseif ( ! $this->options['purge_tag'] && is_tag() ) {
       return;
     }
 
@@ -130,9 +157,8 @@ class Akamai extends AbstractPlugin {
 			}
 		}
 
-		if ( false === headers_sent() ) {
+		if ( ! headers_sent() )
 			header( 'Edge-control: ' . $defaults['edge_options'] . ',max-age=' . $defaults['edge_max_age'] . ',downstream-ttl=' . $defaults['edge_downstream_ttl'] );
-		}
 	}
 
   /**
@@ -225,6 +251,11 @@ class Akamai extends AbstractPlugin {
 			$this->purge_archive();
 		}
 
+    // purge feed
+    if ( $this->options['purge_feed'] ) {
+      $this->purge_feed();
+    }
+
     // purge pagemanager
     if ( $this->options['purge_pagemanager'] ) {
       $this->purge_pagemanager();
@@ -301,6 +332,20 @@ class Akamai extends AbstractPlugin {
     if ( $archive !== false && ! ( $archive instanceof WP_Error ) ) {
 			$this->purge_objects[] = $this->get_post_url( $archive );
 		}
+  }
+
+  /**
+   * Undocumented function
+   *
+   * @return void
+   */
+  protected function purge_feed() {
+    $feeds = array( 'rss', 'xmli', 'rdf', 'atom' );
+
+    foreach( $feeds as $feed ) {
+      $this->purge_objects[] = get_feed_link( $feed );
+      $this->purge_objects[] = add_query_arg( 'feed', $feed, home_url() );
+    }
   }
 
   /**
@@ -500,6 +545,7 @@ class Akamai extends AbstractPlugin {
       'purge_tags'        => get_option( 'asse_akamai_purge_tags' ),
       'purge_archive'     => get_option( 'asse_akamai_purge_archive' ),
       'purge_pagemanager' => get_option( 'asse_akamai_purge_pagemanager' ),
+      'purge_feed'        => get_option( 'asse_akamai_purge_feed' ),
       'edge_downstream_ttl' => get_option( 'asse_akamai_edge_downstream_ttl' ),
       'edge_max_age'        => get_option( 'asse_akamai_edge_max_age' ),
       'edge_options'        => get_option( 'asse_akamai_edge_options' )
