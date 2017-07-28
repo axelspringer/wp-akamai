@@ -176,6 +176,10 @@ class Akamai extends AbstractPlugin {
       $body = $this->get_purge_body( $host );
 		  $auth = $this->get_purge_auth( $body );
 
+      var_dump($body);
+
+      wp_die();
+
       $responses[] = wp_remote_post( 'https://' . $auth->getHost() . $auth->getPath(), array(
 			  'user-agent' => $this->get_user_agent(),
 			  'headers' => array(
@@ -457,7 +461,7 @@ class Akamai extends AbstractPlugin {
     $url = parse_url( $post_url );
     $post_url = $url['path'];
 
-    if ( $url['query'] !== '' ) {
+    if ( ! is_null( $url['query'] ) ) {
       $post_url .= '?' . $url['query'];
     }
 
