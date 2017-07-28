@@ -17,7 +17,7 @@
  * Plugin Name:       Asse Akamai
  * Plugin URI:        https://as-stash.axelspringer.de/projects/WPPL/repos/asse-akamai
  * Description:       Akamai for Asse WordPress Plugin.
- * Version:           0.3.5
+ * Version:           0.3.6
  * Author:            Axel Springer
  * Author URI:        https://www.axelspringer.de
  * Text Domain:       asse-akamai
@@ -37,4 +37,4 @@ register_activation_hook( __FILE__, '\Asse\Plugin\Akamai::activate' );
 register_deactivation_hook( __FILE__, '\Asse\Plugin\Akamai::deactivate' );
 
 // run
-$asse_akamai = new Akamai( 'asse_akmai', '0.3.5', __FILE__ );
+$asse_akamai = new Akamai( 'asse_akmai', '0.3.6', __FILE__ );
