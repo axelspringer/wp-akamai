@@ -343,8 +343,8 @@ class Akamai extends AbstractPlugin {
     $feeds = array( 'rss', 'xmli', 'rdf', 'atom' );
 
     foreach( $feeds as $feed ) {
-      $this->purge_objects[] = get_feed_link( $feed );
-      $this->purge_objects[] = add_query_arg( 'feed', $feed, home_url() );
+      $this->purge_objects[] = $this->get_post_url( get_feed_link( $feed ) );
+      $this->purge_objects[] = $this->get_post_url( add_query_arg( 'feed', $feed, trailingslashit( get_home_url() ) ) );
     }
   }
 
@@ -454,12 +454,14 @@ class Akamai extends AbstractPlugin {
    * @return void
    */
 	protected function get_post_url( $post_url ) {
-		$post_url = parse_url( $post_url, PHP_URL_PATH );
-		if ( strpos( $post_url, '?' ) !== false ) {
-			$post_url .= '?' . parse_url( $post_url, PHP_URL_QUERY );
-		}
+    $url = parse_url( $post_url );
+    $post_url = $url['path'];
 
-		return $post_url;
+    if ( $url['query'] !== '' ) {
+      $post_url .= '?' . $url['query'];
+    }
+
+    return $post_url;
 	}
 
   /**
