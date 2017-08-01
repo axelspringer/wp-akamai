@@ -188,9 +188,6 @@ class Akamai extends AbstractPlugin {
 		  ) );
     }
 
-    print_r($responses);
-    wp_die();
-
     $responses = array_map( function ( $response ) use ( &$success ) {
       if ( wp_remote_retrieve_response_code( $response ) !== 201 ) {
         $success = false;
