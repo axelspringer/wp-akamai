@@ -175,8 +175,8 @@ class Akamai extends AbstractPlugin {
     $hosts = apply_filters( 'asse_akamai_filter_hosts', $this->options['hostnames'] );
 
     foreach( array_filter( $hosts ) as $host ) {
-      $body = apply_filters( 'asse_akamai_filter_body', $this->get_purge_body( $host ) );
-		  $auth = $this->get_purge_auth( json_encode( $body ) );
+      $body = json_encode( apply_filters( 'asse_akamai_filter_body', $this->get_purge_body( $host ) ) );
+		  $auth = $this->get_purge_auth( $body );
 
       $responses[] = wp_remote_post( 'https://' . $auth->getHost() . $auth->getPath(), array(
 			  'user-agent' => $this->get_user_agent(),
@@ -187,6 +187,9 @@ class Akamai extends AbstractPlugin {
 			  'body' => $body
 		  ) );
     }
+
+    print_r($responses);
+    wp_die();
 
     $responses = array_map( function ( $response ) use ( &$success ) {
       if ( wp_remote_retrieve_response_code( $response ) !== 201 ) {
