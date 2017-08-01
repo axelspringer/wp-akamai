@@ -109,7 +109,7 @@ class Akamai extends AbstractPlugin {
 		}
 
     $this->purge_post = $post;
-    $this->purge( $this->options['hostnames'] );
+    $this->purge();
 	}
 
   /**
@@ -167,14 +167,16 @@ class Akamai extends AbstractPlugin {
    * @param [type] $host
    * @return void
    */
-	public function purge( $hosts ) {
+	public function purge() {
 
     $responses  = [];
     $success    = true;
 
+    $hosts = apply_filters( 'asse_akamai_filter_hosts', $this->options['hostnames'] );
+
     foreach( array_filter( $hosts ) as $host ) {
-      $body = $this->get_purge_body( $host );
-		  $auth = $this->get_purge_auth( $body );
+      $body = apply_filters( 'asse_akamai_filter_body', $this->get_purge_body( $host ) );
+		  $auth = $this->get_purge_auth( json_encode( $body ) );
 
       $responses[] = wp_remote_post( 'https://' . $auth->getHost() . $auth->getPath(), array(
 			  'user-agent' => $this->get_user_agent(),
@@ -201,6 +203,8 @@ class Akamai extends AbstractPlugin {
     } else {
       add_filter( 'redirect_post_location', array( &$this, 'add_success_query_arg' ) , 100 );
     }
+
+    return $success;
 	}
 
   /**
@@ -267,7 +271,7 @@ class Akamai extends AbstractPlugin {
 			'objects'  => $this->purge_objects
 		);
 
-		return json_encode( $data );
+		return $data;
 	}
 
   /**
