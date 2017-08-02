@@ -344,7 +344,7 @@ class Akamai extends AbstractPlugin {
    * @return void
    */
   protected function purge_feed() {
-    $feeds = array( 'rss', 'xmli', 'rdf', 'atom' );
+    $feeds = array( '', 'rss', 'xmli', 'rdf', 'atom' );
 
     foreach( $feeds as $feed ) {
       $this->purge_objects[] = $this->get_post_url( get_feed_link( $feed ) );
