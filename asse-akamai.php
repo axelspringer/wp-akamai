@@ -37,4 +37,4 @@ register_activation_hook( __FILE__, '\Asse\Plugin\Akamai::activate' );
 register_deactivation_hook( __FILE__, '\Asse\Plugin\Akamai::deactivate' );
 
 // run
-$asse_akamai = new Akamai( 'asse_akmai', '0.3.11', __FILE__ );
+$asse_akamai = new Akamai( 'asse_akmai', '0.4.0', __FILE__ );
