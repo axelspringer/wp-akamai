@@ -187,6 +187,8 @@ class Akamai extends AbstractPlugin
 
             return $self->do_purge($self->get_purge_auth($body), $body);
         }, array_filter($hosts));
+
+        return $this->process_purge_responses($responses);
     }
 
     /**
@@ -247,6 +249,33 @@ class Akamai extends AbstractPlugin
     }
 
     /**
+     * @param array $responses
+     * @return bool
+     */
+    protected function process_purge_responses(array $responses)
+    {
+        $success = true;
+
+        $responses = array_map(function ($response) use (&$success) {
+            if (wp_remote_retrieve_response_code($response) !== 201) {
+                $success = false;
+            }
+            return json_decode(wp_remote_retrieve_body($response));
+        }, $responses);
+
+        if (!$success) {
+            $instance = $this;
+            add_filter('redirect_post_location', function ($location) use ($instance, $responses) {
+                return $instance->add_error_query_arg($location, $responses);
+            }, 100);
+        } else {
+            add_filter('redirect_post_location', array($this, 'add_success_query_arg'), 100);
+        }
+
+        return $success;
+    }
+
+    /**
      * Undocumented function
      *
      * @param [type] $body
@@ -254,6 +283,10 @@ class Akamai extends AbstractPlugin
      */
     protected function get_purge_auth($body)
     {
+        if (!is_string($body)) {
+            $body = json_encode($body);
+        }
+
         $auth = \Akamai\Open\EdgeGrid\Authentication::createFromEnv($this->akamai_section);
         $auth->setHttpMethod('POST');
         $auth->setPath('/ccu/v3/invalidate/url');
@@ -552,7 +585,7 @@ class Akamai extends AbstractPlugin
      *
      * @param [type] $location
      * @param [type] $responses
-     * @return void
+     * @return string
      */
     public function add_error_query_arg($location, $responses)
     {
