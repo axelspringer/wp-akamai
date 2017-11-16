@@ -172,16 +172,32 @@ class Akamai extends AbstractPlugin
         header($edge_control->build_header());
     }
 
+    /**
+     * Purge index
+     *
+     * @return bool
+     */
     public function purge_home()
+    {
+        return $this->purge_url('/');
+    }
+
+    /**
+     * Purge given url
+     *
+     * @param string $url
+     * @return bool
+     */
+    public function purge_url(string $url)
     {
         $hosts = apply_filters('asse_akamai_filter_hosts', $this->options['hostnames']);
         $self = $this;
 
-        $responses = array_map(function($host) use ($self) {
+        $responses = array_map(function($host) use ($self, $url) {
             $body = [
                 'hostname' => $host,
                 'objects' => [
-                    '/'
+                    $url
                 ]
             ];
 
