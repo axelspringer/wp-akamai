@@ -630,6 +630,10 @@ class Akamai extends AbstractPlugin
      */
     public function admin_notices()
     {
+        if (!class_exists('\Timber\Timber', false)) {
+            return;
+        }
+
         if (isset($_GET['asse-akamai-purge-error'])) {
             $timber_context = array(
                 'error' => 'Unable to purge Akamai Cache.'
