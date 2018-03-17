@@ -331,7 +331,7 @@ class Akamai extends AbstractPlugin {
    * @return void
    */
   protected function purge_archive() {
-    $archive = get_month_link( get_post_time( 'Y', false, $this->purge_post ), get_post_time( 'm', false, $purge_post ) );
+    $archive = get_month_link( get_post_time( 'Y', false, $this->purge_post ), get_post_time( 'm', false, $this->purge_post ) );
 
     if ( $archive !== false && ! ( $archive instanceof WP_Error ) ) {
 			$this->purge_objects[] = $this->get_post_url( $archive );
@@ -461,7 +461,7 @@ class Akamai extends AbstractPlugin {
     $url = parse_url( $post_url );
     $post_url = $url['path'];
 
-    if ( ! is_null( $url['query'] ) ) {
+    if ( isset( $url['query'] ) ) {
       $post_url .= '?' . $url['query'];
     }
 
