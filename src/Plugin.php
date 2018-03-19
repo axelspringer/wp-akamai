@@ -260,9 +260,10 @@ class Akamai extends AbstractPlugin {
       $this->purge_feed();
     }
 
-    // purge pagemanager
+	// purge pagemanager
+	// is add_filter inside of the asse-pagemanger
     if ( $this->options['purge_pagemanager'] ) {
-      $this->purge_pagemanager();
+      //$this->purge_pagemanager();
     }
 
     // data
