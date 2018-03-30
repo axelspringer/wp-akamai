@@ -15,6 +15,7 @@ class Akamai extends AbstractPlugin
     public $purge_post;
     public $base_url;
 
+
     private $akamai_prefix = 'AKAMAI';
     private $akamai_env_vars = array(
         'host',
@@ -301,6 +302,8 @@ class Akamai extends AbstractPlugin
         $permalink = get_permalink($this->purge_post->ID);
 
         $this->purge_objects[] = $this->get_post_url($permalink);
+        //PEA-6579 | Purge Homewidget, each time if a post is purged we have to purge the homewidget to.
+        $this->purge_objects[] = $this->base_url . "?artid=" . $this->purge_post->ID;
     }
 
     /**
