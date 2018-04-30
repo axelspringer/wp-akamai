@@ -1,14 +1,19 @@
 <?php
 
-namespace Asse\Plugin\Akamai;
+namespace AxelSpringer\WP\Akamai;
 
-use \Asse\Settings\Section;
-use \Asse\Settings\Field;
-use \Asse\Settings\Config;
+use AxelSpringer\WP\Bootstrap\Settings\AbstractSettings;
+use AxelSpringer\WP\Bootstrap\Settings\Page;
+use AxelSpringer\WP\Bootstrap\Settings\Field;
+use AxelSpringer\WP\Bootstrap\Settings\Section;
 
-final class Settings extends Config  {
+class Settings extends AbstractSettings {
 
-  public function register() {
+  /**
+   * Loading the settings for the plugin
+   */
+  public function load_settings()
+  {
     // Zugang
 		$args = array(
 			'id'			    => 'asse_akamai_credentials',

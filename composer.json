@@ -1,25 +1,23 @@
 {
-    "name": "wppl/asse-akamai",
+    "name": "axelspringer/asse-akamai",
     "type": "wordpress-plugin",
-    "description": "Asse Akamai for Wordpress",
+    "description": "A companion plugin for Akamai",
     "keywords": [
         "wordpress",
         "plugin",
         "akamai"
     ],
-    "homepage": "https://as-stash.axelspringer.de/projects/WPPL/repos/asse-akamai",
-    "license": "proprietary",
+    "license": "Apache-2.0",
+    "homepage": "https://github.com/axelspringer/wp-akamai",
     "autoload": {
       "psr-4" : {
-        "Asse\\" : "src/"
+        "AxelSpringer\\WP\\Akamai\\": "src/"
       }
     },
     "authors": [
     ],
     "require": {
-        "akamai-open/edgegrid-auth": "^1.0"
-    },
-    "extra": {
-        "installer-name": "asse-akamai"
+        "akamai-open/edgegrid-auth": "^1.0",
+        "axelspringer/wp-bootstrap": "dev-master"
     }
 }

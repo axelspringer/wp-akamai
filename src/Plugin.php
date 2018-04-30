@@ -1,14 +1,11 @@
 <?php
 
-namespace Asse\Plugin;
+namespace AxelSpringer\WP\Akamai;
 
-use \Asse\Settings\Page;
-use \Asse\Settings\Notice;
-use \Asse\Plugin\Akamai\Settings;
-use \Asse\Plugin\AbstractPlugin;
+use AxelSpringer\WP\Bootstrap\Plugin\AbstractPlugin;
 use \Timber\Timber;
 
-class Akamai extends AbstractPlugin {
+class Plugin extends AbstractPlugin {
 
   public $purge_objects          = array();
   public $purge_post;
@@ -31,29 +28,25 @@ class Akamai extends AbstractPlugin {
   );
 
   public function init() {
-    // include for plugin detection
-		include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 
-    // if plugin not active, return
-		if ( ! is_plugin_active( $this->config->basename ) ) {
-			return false;
-		}
-
-    class_exists( '\Asse\Plugin\WPHelper' ) || exit;
-
+    // load options
+    $this->setup->load_options( 'AxelSpringer\WP\Akamai\__OPTION__' );
     $this->settings = new Settings(
-      __( 'ASSE Akamai', 'asse-akamai' ),
-      __( 'Akamai', 'asse-akamai' ),
-      $this->config->name . '_setting_page',
-      'manage_options',
-      $this->config->version,
-      $this->options
+        __( __TRANSLATE__::SETTINGS_PAGE_TITLE ),
+        __( __TRANSLATE__::SETTINGS_MENU_TITLE ),
+        __PLUGIN__::SETTINGS_PAGE,
+        __PLUGIN__::SETTINGS_PERMISSION,
+        $this->setup->version
     );
 
     $this->base_url         = parse_url( get_bloginfo( 'url' ), PHP_URL_PATH ) . '/';
 		$this->base_url         = apply_filters( 'asse_akamai_canonical_url', $this->base_url );
 
-		$this->set_env_vars();
+    // set specific library env
+    $this->set_env_vars();
+
+    // load hooks
+    $this->load_hooks();
   }
 
   /**
@@ -61,9 +54,8 @@ class Akamai extends AbstractPlugin {
    *
    * @return void
    */
-	public function register_hooks() {
-	  add_action( 'admin_init',			  array( &$this, 'register_settings' ) );
-
+  public function load_hooks()
+  {
     add_action( 'save_post', array( &$this, 'purge_on_post' ) );
     // save for later
 		// add_action( 'comment_post', array( &$this, 'purge_on_comment' ) );
@@ -560,51 +552,52 @@ class Akamai extends AbstractPlugin {
     $this->options = $options;
   }
 
-  /**
-   * Undocumented function
-   *
-   * @return void
-   */
-  protected function version_migrate() {
+   /**
+     * Activates the Bootstrap plugin
+     *
+     * @return bool
+     */
+    public static function activation()
+    {
+      // noop
+		  return true;
+    }
 
-  }
+    /**
+     * Do actions after init
+     */
+    public function after_init()
+    {
+        // noop
+    }
 
-  /**
-   * Undocumented function
-   *
-   * @return void
-   */
-  public function enqueue_admin_scripts() {
+    /**
+     * Deactivates the Bootstrap plugin
+     *
+     * @return bool
+     */
+    public static function deactivation()
+    {
+        // noop
+		return true;
+    }
 
-  }
+     /**
+     * Enqueue required scripts
+     *
+     * @return
+     */
+    public function enqueue_scripts()
+    {
 
-  /**
-   * Undocumented function
-   *
-   * @return void
-   */
-  public function register_settings() {
-    $this->settings->register();
-  }
+    }
 
-  /**
-   * Activate plugin
-   *
-   * @return void
-   */
-	public static function activate() {
-    class_exists( '\Asse\Plugin\WPHelper' ) || die( '\'\Asse\Plugin\WPHelper\' required.' );
-
-    return;
-	}
-
-  /**
-   * Deactivate plugin
-   *
-   * @return void
-   */
-	public static function deactivate() {
-    return;
-	}
-
+    /**
+     * Enqueue shared styles and scripts
+     *
+     * @return
+     */
+    public function enqueue_admin_scripts()
+    {
+    }
 }
