@@ -1,7 +1,7 @@
 {
-    "name": "axelspringer/asse-akamai",
+    "name": "axelspringer/wp-akamai",
     "type": "wordpress-plugin",
-    "description": "A companion plugin for Akamai",
+    "description": "A companion plugin for Akamai + WordPress",
     "keywords": [
         "wordpress",
         "plugin",
