@@ -21,10 +21,9 @@ class Plugin extends AbstractPlugin {
 	private $akamai_section        = 'default';
 
 	private $akamai_edge_defaults  = array(
-    'edge_max_age' => '1d',
-    'edge_downstream_ttl' => '1m',
-    'edge_options' =>
-    '!no-store'
+    'wp_akamai_edge_max_age'        => '1d',
+    'wp_akamai_dge_downstream_ttl'  => '1m',
+    'wp_akamai_edge_options'        => '!no-store'
   );
 
   public function init() {
@@ -40,7 +39,7 @@ class Plugin extends AbstractPlugin {
     );
 
     $this->base_url         = parse_url( get_bloginfo( 'url' ), PHP_URL_PATH ) . '/';
-		$this->base_url         = apply_filters( 'asse_akamai_canonical_url', $this->base_url );
+		$this->base_url         = apply_filters( 'wp_akamai_canonical_url', $this->base_url );
 
     // set specific library env
     $this->set_env_vars();
@@ -85,7 +84,7 @@ class Plugin extends AbstractPlugin {
    */
 	public function set_env_vars() {
 		foreach ( $this->akamai_env_vars as $akamai_env_var ) {
-			$_ENV[$this->akamai_prefix . '_' . strtoupper($akamai_env_var)] = $this->options[$akamai_env_var];
+			$_ENV[$this->akamai_prefix . '_' . strtoupper($akamai_env_var)] = $this->setup->options[$akamai_env_var];
 		}
 	}
 
@@ -112,8 +111,8 @@ class Plugin extends AbstractPlugin {
 	public function send_headers() {
 		$defaults   = $this->akamai_edge_defaults;
 
-    if ( ! $this->options['hostnames']
-      || count( $this->options['hostnames'] ) < 1 )
+    if ( ! $this->setup->options['wp_akamai_hostnames']
+      || count( $this->setup->options['wp_akamai_hostnames'] ) < 1 )
         return;
 
     if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
@@ -130,22 +129,22 @@ class Plugin extends AbstractPlugin {
       return;
     }
 
-    if ( ! $this->options['purge_pagemanager']
+    if ( ! $this->setup->options['wp_akamai_purge_pagemanager']
       && ( is_category() || is_tag() || is_front_page() || is_home() ) ) {
       return;
-    } elseif ( ! $this->options['purge_feed'] && is_feed() ) {
+    } elseif ( ! $this->setup->options['wp_akamai_purge_feed'] && is_feed() ) {
       return;
-    } elseif ( ! $this->options['purge_category'] && is_category() ) {
+    } elseif ( ! $this->setup->options['wp_akamai_purge_category'] && is_category() ) {
       return;
-    } elseif ( ! $this->options['purge_archive'] && is_archive() ) {
+    } elseif ( ! $this->setup->options['wp_akamai_purge_archive'] && is_archive() ) {
       return;
-    } elseif ( ! $this->options['purge_tag'] && is_tag() ) {
+    } elseif ( ! $this->setup->options['wp_akamai_purge_tag'] && is_tag() ) {
       return;
     }
 
 		foreach( $defaults as $default_key => $default_value ) {
-			if ( isset( $this->options[$default_key] ) && ! empty( $this->options[$default_key] ) ) {
-				$defaults[$default_key] = $this->options[$default_key];
+			if ( isset( $this->setup->options[$default_key] ) && ! empty( $this->setup->options[$default_key] ) ) {
+				$defaults[$default_key] = $this->setup->options[$default_key];
 			}
 		}
 
@@ -164,10 +163,10 @@ class Plugin extends AbstractPlugin {
     $responses  = [];
     $success    = true;
 
-    $hosts = apply_filters( 'asse_akamai_filter_hosts', $this->options['hostnames'] );
+    $hosts = apply_filters( 'wp_akamai_filter_hosts', $this->setup->options['wp_akamai_hostnames'] );
 
     foreach( array_filter( $hosts ) as $host ) {
-      $body = json_encode( apply_filters( 'asse_akamai_filter_body', $this->get_purge_body( $host ) ) );
+      $body = json_encode( apply_filters( 'wp_akamai_filter_body', $this->get_purge_body( $host ) ) );
 		  $auth = $this->get_purge_auth( $body );
 
       $responses[] = wp_remote_post( 'https://' . $auth->getHost() . $auth->getPath(), array(
@@ -225,7 +224,7 @@ class Plugin extends AbstractPlugin {
 		$this->purge_post();
 
     // purge front
-    if ( $this->options['purge_front'] ) {
+    if ( $this->setup->options['wp_akamai_purge_front'] ) {
       $this->purge_front( $this->base_url );
     }
 
@@ -233,27 +232,27 @@ class Plugin extends AbstractPlugin {
 		$wp_host = $this->get_hostname( $host );
 
     // purge tags
-    if ( $this->options['purge_tags'] ) {
+    if ( $this->setup->options['wp_akamai_purge_tags'] ) {
 		  $this->purge_tags();
     }
 
     // purge categories
-    if ( $this->options['purge_categories'] ) {
+    if ( $this->setup->options['wp_akamai_purge_categories'] ) {
       $this->purge_categories();
     }
 
     // purge archives
-		if ( $this->options['purge_archive'] ) {
+		if ( $this->setup->options['wp_akamai_purge_archive'] ) {
 			$this->purge_archive();
 		}
 
     // purge feed
-    if ( $this->options['purge_feed'] ) {
+    if ( $this->setup->options['wp_akamai_purge_feed'] ) {
       $this->purge_feed();
     }
 
     // purge pagemanager
-    if ( $this->options['purge_pagemanager'] ) {
+    if ( $this->setup->options['wp_akamai_purge_pagemanager'] ) {
       $this->purge_pagemanager();
     }
 
@@ -466,7 +465,7 @@ class Plugin extends AbstractPlugin {
    * @return void
    */
 	protected function get_user_agent() {
-		return sprintf( 'WordPress/%s Asse-Akamai/%s PHP/%s', get_bloginfo( 'version' ), $this->config->version, phpversion() );
+		return sprintf( 'WordPress/%s WP-Akamai/%s PHP/%s', get_bloginfo( 'version' ), $this->config->version, phpversion() );
 	}
 
   /**
@@ -497,7 +496,7 @@ class Plugin extends AbstractPlugin {
 	public function add_error_query_arg( $location, $responses ) {
 		remove_filter( 'redirect_post_location', array( $this, 'add_error_query_arg' ), 100 );
 
-		return add_query_arg( array( 'asse-akamai-purge-error' => 'true' ), $location );
+		return add_query_arg( array( 'wp-akamai-purge-error' => 'true' ), $location );
 	}
 
   /**
@@ -509,7 +508,7 @@ class Plugin extends AbstractPlugin {
 	public function add_success_query_arg( $location ) {
 		remove_filter( 'redirect_post_location', array( &$this, 'add_success_query_arg' ), 100 );
 
-		return add_query_arg( array( 'asse-akamai-purge-success' => 'true' ), $location );
+		return add_query_arg( array( 'wp-akamai-purge-success' => 'true' ), $location );
 	}
 
   /**
@@ -518,11 +517,11 @@ class Plugin extends AbstractPlugin {
    * @return void
    */
 	public function admin_notices() {
-		if ( isset( $_GET['asse-akamai-purge-error'] ) ) {
+		if ( isset( $_GET['wp-akamai-purge-error'] ) ) {
 			$timber_context = array(
 			  'error'   => 'Unable to purge Akamai Cache.'
 			);
-			Timber::render( 'asse-framework-notice-error.twig', $timber_context );
+			Timber::render( 'wp-framework-notice-error.twig', $timber_context );
 		}
 	}
 
@@ -533,23 +532,23 @@ class Plugin extends AbstractPlugin {
    */
   public function set_options() {
     $options = array(
-      'hostnames'         => get_option( 'asse_akamai_hostnames' ),
-		  'host'              => get_option( 'asse_akamai_host' ),
-      'client_token'      => get_option( 'asse_akamai_client_token' ),
-      'client_secret'     => get_option( 'asse_akamai_client_secret' ),
-      'access_token'      => get_option( 'asse_akamai_access_token' ),
-      'purge_front'       => get_option( 'asse_akamai_purge_front' ),
-      'purge_categories'  => get_option( 'asse_akamai_purge_categories' ),
-      'purge_tags'        => get_option( 'asse_akamai_purge_tags' ),
-      'purge_archive'     => get_option( 'asse_akamai_purge_archive' ),
-      'purge_pagemanager' => get_option( 'asse_akamai_purge_pagemanager' ),
-      'purge_feed'        => get_option( 'asse_akamai_purge_feed' ),
-      'edge_downstream_ttl' => get_option( 'asse_akamai_edge_downstream_ttl' ),
-      'edge_max_age'        => get_option( 'asse_akamai_edge_max_age' ),
-      'edge_options'        => get_option( 'asse_akamai_edge_options' )
+      'hostnames'         => get_option( 'wp_akamai_hostnames' ),
+		  'host'              => get_option( 'wp_akamai_host' ),
+      'client_token'      => get_option( 'wp_akamai_client_token' ),
+      'client_secret'     => get_option( 'wp_akamai_client_secret' ),
+      'access_token'      => get_option( 'wp_akamai_access_token' ),
+      'purge_front'       => get_option( 'wp_akamai_purge_front' ),
+      'purge_categories'  => get_option( 'wp_akamai_purge_categories' ),
+      'purge_tags'        => get_option( 'wp_akamai_purge_tags' ),
+      'purge_archive'     => get_option( 'wp_akamai_purge_archive' ),
+      'purge_pagemanager' => get_option( 'wp_akamai_purge_pagemanager' ),
+      'purge_feed'        => get_option( 'wp_akamai_purge_feed' ),
+      'edge_downstream_ttl' => get_option( 'wp_akamai_edge_downstream_ttl' ),
+      'edge_max_age'        => get_option( 'wp_akamai_edge_max_age' ),
+      'edge_options'        => get_option( 'wp_akamai_edge_options' )
     );
 
-    $this->options = $options;
+    $this->setup->options = $options;
   }
 
    /**
